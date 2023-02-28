@@ -34,7 +34,7 @@ async def main(argv, data: Database):
         gid = await data.get_group(user)
         raw = await data.get_day(gid, date, get_week_type())
         if raw:
-            schedule = create_pre(raw) if argv[1] == 'pre' else t.hi + create_schedule(raw)[raw] + t.form_footer
+            schedule = create_pre(raw) if argv[1] == 'pre' else t.hi + create_schedule(raw)[raw[0][0]] + t.form_footer
             try:
                 await bot.send_message(user, schedule, disable_web_page_preview=True)
             except aiogram.utils.exceptions.BotBlocked:
