@@ -45,7 +45,7 @@ async def cancel(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-def register_handlers_common(dp: Dispatcher):
+def register_handler_common(dp: Dispatcher):
     dp.register_message_handler(start, commands="start", state="*")
     dp.register_callback_query_handler(cb_faculty, state=StartHandler.faculty_choose)
     dp.register_callback_query_handler(user_register, state=StartHandler.user_register)

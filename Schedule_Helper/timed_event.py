@@ -38,6 +38,7 @@ async def main(argv, data: Database):
             try:
                 await bot.send_message(user, schedule, disable_web_page_preview=True)
             except aiogram.utils.exceptions.BotBlocked:
+                logging.info(f"А user {user} the blocked bot!")
                 continue
             await asyncio.sleep(0.3)
     logging.info("Mailing completed successfully!")
