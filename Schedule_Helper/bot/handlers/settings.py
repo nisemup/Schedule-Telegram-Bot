@@ -72,7 +72,7 @@ async def group_update(call: types.CallbackQuery, state: FSMContext, data: Datab
         await state.finish()
 
 
-def register_handlers_settings(dp: Dispatcher):
+def register_handler_settings(dp: Dispatcher):
     dp.register_message_handler(menu, Text(equals=t.b_settings, ignore_case=True), state="*")
     dp.register_message_handler(type_chosen, state=Settings.menu_chosen)
     dp.register_message_handler(notification, state=Settings.wait_notification)

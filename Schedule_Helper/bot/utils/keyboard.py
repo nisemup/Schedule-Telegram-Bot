@@ -48,7 +48,7 @@ def main_menu(aid):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(t.b_timetable)
     keyboard.add(t.b_settings)
-    if aid == os.getenv("MAIN_ADMIN"):
+    if aid == int(os.getenv("MAIN_ADMIN")):
         keyboard.add(t.b_admin)
     return keyboard
 

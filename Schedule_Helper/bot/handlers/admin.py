@@ -70,7 +70,7 @@ async def confirm_send(message: types.Message, state: FSMContext, data: Database
     await state.finish()
 
 
-def register_handlers_admin(dp: Dispatcher):
+def register_handler_admin(dp: Dispatcher):
     dp.register_message_handler(cmd_admin, Text(equals=t.b_admin, ignore_case=True), state="*")
     dp.register_message_handler(menu, state=AdminMenu.wait_menu)
 
