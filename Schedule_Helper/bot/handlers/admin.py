@@ -19,15 +19,15 @@ load_dotenv(BASE_DIR / "settings" / ".env")
 
 
 class AdminMenu(StatesGroup):
-    wait_menu = State()
-    wait_news = State()
-    wait_confirm = State()
+    menu_selection = State()
+    mailing_menu = State()
+    confirm_menu = State()
 
 
 async def cmd_admin(message: types.Message, state: FSMContext):
     if message.chat.id == int(os.getenv("MAIN_ADMIN")):
         await message.answer(t.a_hi, reply_markup=key.admin())
-        await AdminMenu.wait_menu.set()
+        await AdminMenu.menu_selection.set()
     else:
         await state.finish()
         return
@@ -36,7 +36,7 @@ async def cmd_admin(message: types.Message, state: FSMContext):
 async def menu(message: types.Message):
     if message.text == t.b_newsletter:
         await message.answer(t.a_newsletter)
-        await AdminMenu.wait_news.set()
+        await AdminMenu.mailing_menu.set()
     else:
         await message.answer(t.error_text)
         return
@@ -48,7 +48,7 @@ async def menu(message: types.Message):
 async def newsletter(message: types.Message, state: FSMContext):
     await message.answer(message.text, reply_markup=key.send_news())
     await state.update_data(text=message.text)
-    await AdminMenu.wait_confirm.set()
+    await AdminMenu.confirm_menu.set()
 
 
 async def confirm_send(message: types.Message, state: FSMContext, data: Database):
@@ -72,8 +72,8 @@ async def confirm_send(message: types.Message, state: FSMContext, data: Database
 
 def register_handler_admin(dp: Dispatcher):
     dp.register_message_handler(cmd_admin, Text(equals=t.b_admin, ignore_case=True), state="*")
-    dp.register_message_handler(menu, state=AdminMenu.wait_menu)
+    dp.register_message_handler(menu, state=AdminMenu.menu_selection)
 
-    dp.register_message_handler(newsletter, state=AdminMenu.wait_news)
-    dp.register_message_handler(confirm_send, state=AdminMenu.wait_confirm)
+    dp.register_message_handler(newsletter, state=AdminMenu.mailing_menu)
+    dp.register_message_handler(confirm_send, state=AdminMenu.confirm_menu)
 

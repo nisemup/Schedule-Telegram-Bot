@@ -10,20 +10,20 @@ load_dotenv(BASE_DIR / "settings" / ".env")
 
 
 class Database:
-    def __init__(self, conn):
-        self.conn: asyncpg.connection = conn
+    def __init__(self, connect):
+        self.__connect: asyncpg.connection = connect
 
     async def get_faculty(self) -> list[str]:
         sql = """SELECT DISTINCT faculty FROM backend_groups"""
-        return sorted([key[0] for key in await self.conn.fetch(sql)])
+        return sorted([key[0] for key in await self.__connect.fetch(sql)])
 
     async def get_gnum(self, faculty) -> list[str]:
         sql = """SELECT gnum FROM backend_groups WHERE faculty = $1"""
-        return sorted([key[0] for key in await self.conn.fetch(sql, faculty)])
+        return sorted([key[0] for key in await self.__connect.fetch(sql, faculty)])
 
     async def get_gid(self, faculty, gnum) -> str:
         sql = """SELECT gid FROM backend_groups WHERE faculty = $1 AND gnum = $2"""
-        return await self.conn.fetchval(sql, faculty, int(gnum))
+        return await self.__connect.fetchval(sql, faculty, int(gnum))
 
     async def create_user(self, uid, gid, username=None) -> bool:
         sql = """
@@ -34,45 +34,45 @@ class Database:
                 username = EXCLUDED.username,
                 group_id = EXCLUDED.group_id;
         """
-        await self.conn.execute(sql, int(uid), username, gid)
+        await self.__connect.execute(sql, int(uid), username, gid)
         return True
 
     async def get_admins(self) -> list[str]:
         sql = """SELECT user_id FROM backend_profiles WHERE is_admin = True"""
-        return [key[0] for key in await self.conn.fetch(sql)]
+        return [key[0] for key in await self.__connect.fetch(sql)]
 
     async def get_moderators(self) -> list[str]:
         sql = """SELECT user_id FROM backend_profiles WHERE is_moderator = True"""
-        return [key[0] for key in await self.conn.fetch(sql)]
+        return [key[0] for key in await self.__connect.fetch(sql)]
 
     async def get_notification(self, uid) -> bool:
         sql = """SELECT notification FROM backend_profiles WHERE user_id = $1"""
-        return await self.conn.fetchval(sql, int(uid))
+        return await self.__connect.fetchval(sql, int(uid))
 
     async def update_notification(self, uid, data) -> bool:
         state = False if data else True
         sql = """UPDATE backend_profiles SET notification = $1 WHERE user_id = $2"""
-        await self.conn.execute(sql, state, int(uid))
+        await self.__connect.execute(sql, state, int(uid))
         return True
 
     async def get_group(self, uid) -> str:
         sql = """SELECT group_id FROM backend_profiles WHERE user_id = $1"""
-        return await self.conn.fetchval(sql, int(uid))
+        return await self.__connect.fetchval(sql, int(uid))
 
     async def get_schedule(self, gid, week_type) -> list[str]:
         sql = """
             SELECT day, number, name, start_time, end_time, classroom, url
             FROM backend_schedule WHERE group_id = $1 AND week_type = $2
         """
-        return await self.conn.fetch(sql, gid, week_type)
+        return await self.__connect.fetch(sql, gid, week_type)
 
     async def get_day(self, gid, day, week) -> list[str]:
         sql = """
             SELECT day, number, name, start_time, end_time, classroom, url
             FROM backend_schedule WHERE group_id = $1 AND week_type = $2 AND day = $3
         """
-        return await self.conn.fetch(sql, gid, week, day.lower())
+        return await self.__connect.fetch(sql, gid, week, day.lower())
 
     async def get_uids_notif(self) -> list[str]:
         sql = """SELECT user_id FROM backend_profiles WHERE notification = True"""
-        return [key[0] for key in await self.conn.fetch(sql)]
+        return [key[0] for key in await self.__connect.fetch(sql)]
