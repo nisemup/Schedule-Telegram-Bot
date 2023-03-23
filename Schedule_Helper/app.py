@@ -19,9 +19,10 @@ from dotenv import load_dotenv
 
 
 BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / "settings" / ".env")
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG if os.getenv("DEBUG") else logging.INFO,
     filename="logs.log",
     datefmt="%H:%M:%S",
     format="[%(asctime)s] %(levelname)s | %(module)s-%(funcName)s (%(lineno)d): %(message)s"
@@ -30,7 +31,6 @@ logging.basicConfig(
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings.settings")
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
-load_dotenv(BASE_DIR / "settings" / ".env")
 
 loop = asyncio.new_event_loop()
 asyncio.set_event_loop(loop)
