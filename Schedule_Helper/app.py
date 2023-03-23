@@ -37,12 +37,12 @@ asyncio.set_event_loop(loop)
 
 
 class MyBot:
-    dp = load.dp
+    __dp = load.dp
     Dispatcher.set_current(load.dp)
 
     @classmethod
     def run(cls):
-        executor.start_polling(cls.dp, on_startup=cls.on_startup, on_shutdown=cls.on_shutdown)
+        executor.start_polling(cls.__dp, on_startup=cls.on_startup, on_shutdown=cls.on_shutdown)
 
     @staticmethod
     async def on_startup(dp: Dispatcher):
@@ -68,15 +68,15 @@ class MyBot:
 
 
 class MyServer:
-    app = get_asgi_application()
+    __app = get_asgi_application()
 
-    config = uvicorn.Config(app=app, loop=loop, port=8000, host="0.0.0.0")
-    server = uvicorn.Server(config=config)
+    __config = uvicorn.Config(app=__app, loop=loop, port=8000, host="0.0.0.0")
+    __server = uvicorn.Server(config=__config)
 
     @classmethod
     def run(cls):
         asyncio.run(cls.on_startup())
-        asyncio.run(cls.server.serve())
+        asyncio.run(cls.__server.serve())
         asyncio.run(cls.on_shutdown())
 
     @staticmethod

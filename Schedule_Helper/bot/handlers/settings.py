@@ -7,28 +7,28 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
 
-class Settings(StatesGroup):
-    menu_chosen = State()
-    wait_notification = State()
-    wait_group = State()
+class SettingsMenu(StatesGroup):
+    menu_selection = State()
+    notification_selection = State()
+    group_selection = State()
     group_update = State()
 
 
 async def menu(message: types.Message):
     await message.answer(t.b_menu_chosen, reply_markup=key.settings())
-    await Settings.menu_chosen.set()
+    await SettingsMenu.menu_selection.set()
 
 
 async def type_chosen(message: types.Message, state: FSMContext, data: Database):
     if message.text == t.b_notification:
         await message.answer(t.b_notification, reply_markup=key.chosen_on())
-        await Settings.wait_notification.set()
+        await SettingsMenu.notification_selection.set()
     elif message.text == t.b_group:
         username = message.from_user.username if message.from_user.username else None
         await state.update_data(username=username)
         fac = await data.get_faculty()
         await message.answer(t.faculty_message, reply_markup=key.inline_choose(fac))
-        await Settings.wait_group.set()
+        await SettingsMenu.group_selection.set()
     else:
         await message.answer(t.error_text)
         return
@@ -47,7 +47,7 @@ async def notification(message: types.Message, state: FSMContext, data: Database
         await state.finish()
     elif message.text == t.b_back:
         await message.answer(t.b_menu_chosen, reply_markup=key.settings())
-        await Settings.menu_chosen.set()
+        await SettingsMenu.menu_selection.set()
     else:
         await message.answer(t.error_text)
         return
@@ -60,7 +60,7 @@ async def group(call: types.CallbackQuery, state: FSMContext, data: Database):
     await call.message.answer(t.group_message,
                               reply_markup=key.inline_choose(gnum))
     await call.answer()
-    await Settings.group_update.set()
+    await SettingsMenu.group_update.set()
 
 
 async def group_update(call: types.CallbackQuery, state: FSMContext, data: Database):
@@ -74,7 +74,7 @@ async def group_update(call: types.CallbackQuery, state: FSMContext, data: Datab
 
 def register_handler_settings(dp: Dispatcher):
     dp.register_message_handler(menu, Text(equals=t.b_settings, ignore_case=True), state="*")
-    dp.register_message_handler(type_chosen, state=Settings.menu_chosen)
-    dp.register_message_handler(notification, state=Settings.wait_notification)
-    dp.register_callback_query_handler(group, state=Settings.wait_group)
-    dp.register_callback_query_handler(group_update, state=Settings.group_update)
+    dp.register_message_handler(type_chosen, state=SettingsMenu.menu_selection)
+    dp.register_message_handler(notification, state=SettingsMenu.notification_selection)
+    dp.register_callback_query_handler(group, state=SettingsMenu.group_selection)
+    dp.register_callback_query_handler(group_update, state=SettingsMenu.group_update)

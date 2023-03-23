@@ -8,7 +8,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 
 class StartHandler(StatesGroup):
-    faculty_choose = State()
+    faculty_selection = State()
     user_register = State()
 
 
@@ -18,7 +18,7 @@ async def start(message: types.Message, state: FSMContext, data: Database):
     await state.update_data(username=username)
     faculty = await data.get_faculty()
     await message.answer(t.faculty_message, reply_markup=key.inline_choose(faculty))
-    await StartHandler.faculty_choose.set()
+    await StartHandler.faculty_selection.set()
 
 
 async def cb_faculty(call: types.CallbackQuery, state: FSMContext, data: Database):
@@ -47,6 +47,6 @@ async def cancel(message: types.Message, state: FSMContext):
 
 def register_handler_common(dp: Dispatcher):
     dp.register_message_handler(start, commands="start", state="*")
-    dp.register_callback_query_handler(cb_faculty, state=StartHandler.faculty_choose)
+    dp.register_callback_query_handler(cb_faculty, state=StartHandler.faculty_selection)
     dp.register_callback_query_handler(user_register, state=StartHandler.user_register)
     dp.register_message_handler(cancel, Text(equals=t.b_cancel, ignore_case=False), state="*")

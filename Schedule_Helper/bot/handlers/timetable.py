@@ -11,7 +11,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 
 class TimeTable(StatesGroup):
-    wait_day = State()
+    day_selection = State()
     callback_register = State()
 
 
