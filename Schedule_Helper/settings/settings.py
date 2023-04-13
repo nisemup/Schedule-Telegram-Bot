@@ -13,9 +13,9 @@ load_dotenv(BASE_DIR / "settings" / ".env")
 SECRET_KEY = getenv("DJANGO_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = getenv("DEBUG")
+DEBUG = getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = ['5.188.50.9', '127.0.0.1']
+ALLOWED_HOSTS = [getenv("IPv4"), '127.0.0.1']
 
 
 # Application definition
@@ -34,6 +34,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -112,8 +113,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATIC_URL = '/static/'
 STATIC_ROOT = path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = (
+    BASE_DIR / "static",
+)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

@@ -1,10 +1,10 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
-from aiogram import types
-from .database import Database
-from ..language import uk_UA as t
 
+from aiogram import types
+from dotenv import load_dotenv
+
+from ..language import uk_UA as t
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / "settings" / ".env")
@@ -26,21 +26,6 @@ def back():
 def cancel():
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     keyboard.add(t.b_cancel)
-    return keyboard
-
-
-def group():
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    keyboard.add(t.b_sdl_add)
-    keyboard.add(t.b_back, t.b_cancel)
-    return keyboard
-
-
-def day():
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    keyboard.add(t.monday, t.tuesday, t.wednesday)
-    keyboard.add(t.thursday, t.friday, t.saturday)
-    keyboard.add(t.b_back, t.b_cancel)
     return keyboard
 
 
@@ -82,64 +67,35 @@ def send_news():
     return keyboard
 
 
-def pair_type():
-    keyboard = types.InlineKeyboardMarkup()
-    odd = types.InlineKeyboardButton(text=t.b_prst_lc, callback_data='odd')
-    even = types.InlineKeyboardButton(text=t.b_prst_pr, callback_data='even')
-    keyboard.add(odd, even)
-    return keyboard
+def sdl(week, day=None):
+    days = {
+        'monday': types.InlineKeyboardButton(text='Пн', callback_data='monday'),
+        'tuesday': types.InlineKeyboardButton(text='Вт', callback_data='tuesday'),
+        'wednesday': types.InlineKeyboardButton(text='Ср', callback_data='wednesday'),
+        'thursday': types.InlineKeyboardButton(text='Чт', callback_data='thursday'),
+        'friday': types.InlineKeyboardButton(text='Пт', callback_data='friday'),
+        'saturday': types.InlineKeyboardButton(text='Cб', callback_data='saturday'),
+    }
 
-
-def pairs():
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True, row_width=3)
-    buttons = [types.KeyboardButton(text=pair) for pair in t.pair_name]
-    keyboard.add(*buttons)
-    keyboard.add(t.b_back, t.b_cancel)
-    return keyboard
-
-
-def sdl_confirm():
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    keyboard.add(t.b_sdl_confirm_end)
-    keyboard.add(t.b_sdl_confirm_return)
-    keyboard.add(t.b_cancel)
-    return keyboard
-
-
-def sdl(call='None'):
-    keyboard = types.InlineKeyboardMarkup()
-    mon = types.InlineKeyboardButton(text='Пн', callback_data='monday')
-    tue = types.InlineKeyboardButton(text='Вт', callback_data='tuesday')
-    wed = types.InlineKeyboardButton(text='Ср', callback_data='wednesday')
-    thu = types.InlineKeyboardButton(text='Чт', callback_data='thursday')
-    fri = types.InlineKeyboardButton(text='Пт', callback_data='friday')
-    sat = types.InlineKeyboardButton(text='Cб', callback_data='saturday')
+    odd = types.InlineKeyboardButton(text=t.odd, callback_data='odd')
+    even = types.InlineKeyboardButton(text=t.even, callback_data='even')
     close = types.InlineKeyboardButton(text='Закрити', callback_data='close')
-    if call == 'None':
-        pass
-    else:
-        if call.data == 'monday':
-            mon = types.InlineKeyboardButton(text='👁', callback_data='monday')
-        elif call.data == 'tuesday':
-            tue = types.InlineKeyboardButton(text='👁', callback_data='tuesday')
-        elif call.data == 'wednesday':
-            wed = types.InlineKeyboardButton(text='👁', callback_data='wednesday')
-        elif call.data == 'thursday':
-            thu = types.InlineKeyboardButton(text='👁', callback_data='thursday')
-        elif call.data == 'friday':
-            fri = types.InlineKeyboardButton(text='👁', callback_data='friday')
-        elif call.data == 'saturday':
-            sat = types.InlineKeyboardButton(text='👁', callback_data='saturday')
-    keyboard.add(mon, tue, wed, thu, fri, sat)
+
+    if day in days:
+        days[day].text = '👁'
+
+    keyboard = types.InlineKeyboardMarkup()
+    keyboard.add(*days.values())
+    keyboard.add(even if week == 'odd' else odd)
     keyboard.add(close)
     return keyboard
 
 
 def sdl_edit():
-    keyboard = types.InlineKeyboardMarkup()
     edit = types.InlineKeyboardButton(text='Редагувати', callback_data='edit')
     delete = types.InlineKeyboardButton(text='Видалити', callback_data='full')
     close = types.InlineKeyboardButton(text='Закрити', callback_data='close')
+    keyboard = types.InlineKeyboardMarkup()
     keyboard.add(edit, delete)
     keyboard.add(close)
     return keyboard

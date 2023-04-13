@@ -2,7 +2,7 @@ import logging
 
 from ..language import uk_UA as t
 from ..utils.database import Database
-from ..utils.utils import create_schedule, get_week_type
+from ..utils.utils import create_schedule, get_week_type, get_weekday
 from ..utils import keyboard as key
 from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
@@ -19,26 +19,37 @@ async def cmd_timetable(message: types.Message, state: FSMContext, data: Databas
     week = get_week_type()
     gid = await data.get_group(message.chat.id)
     raw_data = await data.get_schedule(gid, week)
-    await state.update_data(data=create_schedule(raw_data))
-    await message.answer(t.day_text, reply_markup=key.sdl())
+    await state.update_data(week=week, gid=gid, schedule=create_schedule(raw_data))
+    await message.answer(t.day_text, reply_markup=key.sdl(week))
     await TimeTable.callback_register.set()
 
 
-async def callback_register(call: types.CallbackQuery, state: FSMContext):
+async def callback_register(call: types.CallbackQuery, state: FSMContext, data: Database):
     fsm_data = await state.get_data()
-    if call.data == 'close':
+
+    week = fsm_data['week']
+    schedule = fsm_data['schedule']
+    day = call.data if call.data != 'close' and call.data != 'odd' and call.data != 'even' else get_weekday()
+
+    if call.data == 'odd' or call.data == 'even':
+        week = call.data
+        raw = await data.get_schedule(fsm_data['gid'], week)
+        schedule = create_schedule(raw)
+        await state.update_data(week=week, schedule=schedule)
+    elif call.data == 'close':
         await call.message.delete()
         await state.finish()
-    else:
-        try:
-            await call.message.edit_text(
-                fsm_data[call.data] + t.form_footer if fsm_data.get(call.data) is not None else t.none_text,
-                reply_markup=key.sdl(call),
-                disable_web_page_preview=True
-            )
-        except Exception as ex:
-            logging.error(ex)
-            pass
+
+    try:
+        await call.message.edit_text(
+            schedule[day] + t.form_footer if day in schedule else t.none_text,
+            reply_markup=key.sdl(week, day),
+            disable_web_page_preview=True
+        )
+    except Exception as ex:
+        logging.error(ex)
+        pass
+
     await call.answer()
     return
 

@@ -1,10 +1,11 @@
-from ..utils import keyboard as key
-from ..utils.database import Database
-from ..language import uk_UA as t
 from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
+
+from ..language import uk_UA as t
+from ..utils import keyboard as key
+from ..utils.database import Database
 
 
 class StartHandler(StatesGroup):

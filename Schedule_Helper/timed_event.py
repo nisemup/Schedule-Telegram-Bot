@@ -1,15 +1,15 @@
 import asyncio
 import logging
-import asyncpg
-import aiogram
 import os
 import sys
 from datetime import datetime, timedelta
-from bot.loader import dp
-from bot.utils.middlewares import DbMiddleware
-from bot.utils.database import Database
+
+import aiogram
+import asyncpg
+
 from bot.language import uk_UA as t
 from bot.loader import bot
+from bot.utils.database import Database
 from bot.utils.utils import get_week_type, create_schedule, create_pre, days
 
 
@@ -38,7 +38,7 @@ async def main(argv, data: Database):
             try:
                 await bot.send_message(user, schedule, disable_web_page_preview=True)
             except aiogram.utils.exceptions.BotBlocked:
-                logging.info(f"А user {user} the blocked bot!")
+                logging.info(f"User {user} has blocked the bot.")
                 continue
             await asyncio.sleep(0.3)
     logging.info("Mailing completed successfully!")

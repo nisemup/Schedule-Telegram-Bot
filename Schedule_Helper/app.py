@@ -1,28 +1,27 @@
 import asyncio
-import asyncpg
 import logging
-import uvicorn
 import os
-
-from bot.handlers.admin import register_handler_admin
-from bot.handlers.settings import register_handler_settings
-from bot.handlers.common import register_handler_common
-from bot.handlers.timetable import register_handler_timetable
-from bot.utils.middlewares import DbMiddleware, ThrottlingMiddleware
-
 from multiprocessing import Process
 from pathlib import Path
-from bot import loader as load
-from aiogram import Bot, Dispatcher, executor, types
+
+import asyncpg
+import uvicorn
+from aiogram import Dispatcher, executor
 from django.core.asgi import get_asgi_application
 from dotenv import load_dotenv
 
+from bot import loader as load
+from bot.handlers.admin import register_handler_admin
+from bot.handlers.common import register_handler_common
+from bot.handlers.settings import register_handler_settings
+from bot.handlers.timetable import register_handler_timetable
+from bot.utils.middlewares import DbMiddleware, ThrottlingMiddleware
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / "settings" / ".env")
 
 logging.basicConfig(
-    level=logging.DEBUG if os.getenv("DEBUG") else logging.INFO,
+    level=logging.DEBUG if os.getenv("DEBUG") == 'True' else logging.INFO,
     filename="logs.log",
     datefmt="%H:%M:%S",
     format="[%(asctime)s] %(levelname)s | %(module)s-%(funcName)s (%(lineno)d): %(message)s"
@@ -47,6 +46,7 @@ class MyBot:
     @staticmethod
     async def on_startup(dp: Dispatcher):
         await load.set_commands()
+
         pool = await asyncpg.create_pool(
             database=os.getenv('DB_NAME'),
             user=os.getenv('DB_USER'),
@@ -54,8 +54,10 @@ class MyBot:
             host=os.getenv('DB_HOST'),
             port=os.getenv('DB_PORT')
         )
+
         dp.middleware.setup(DbMiddleware(pool))
         dp.middleware.setup(ThrottlingMiddleware())
+
         register_handler_common(dp)
         register_handler_settings(dp)
         register_handler_timetable(dp)

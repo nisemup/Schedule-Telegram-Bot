@@ -1,24 +1,18 @@
-from aiogram.contrib.fsm_storage.redis import RedisStorage2
-from aiogram.contrib.fsm_storage.mongo import MongoStorage
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.types import BotCommand
-from aiogram import Bot, Dispatcher, types
-from dotenv import load_dotenv
-from .utils.database import Database
+from os import getenv
 from pathlib import Path
-import asyncio
-import os
 
+from aiogram import Bot, Dispatcher, types
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.contrib.fsm_storage.redis import RedisStorage2
+from aiogram.types import BotCommand
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / "settings" / ".env")
 
-if os.getenv('DEBUG'):
-    storage = MemoryStorage()
-else:
-    storage = RedisStorage2('localhost', 6379, db=5, pool_size=10, prefix='my_fsm_key')
+storage = MemoryStorage() if getenv('DEBUG') == 'True' else RedisStorage2('localhost', 6379, db=5, pool_size=10, prefix='my_fsm_key')
 
-bot = Bot(token=os.getenv('BOT_API_TOKEN'), parse_mode=types.ParseMode.HTML)
+bot = Bot(token=getenv('BOT_API_TOKEN'), parse_mode=types.ParseMode.HTML)
 dp = Dispatcher(bot, storage=storage)
 
 
