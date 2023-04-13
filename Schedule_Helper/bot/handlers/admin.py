@@ -1,19 +1,18 @@
+import asyncio
 import os
+import logging
 
-from ..loader import bot, BASE_DIR
-from ..utils import keyboard as key
-from ..utils.database import Database
-from ..language import uk_UA as t
-
-from asyncio import sleep
-from dotenv import load_dotenv
-
-from aiogram.utils import exceptions
 from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.utils import exceptions
+from dotenv import load_dotenv
 
+from ..language import uk_UA as t
+from ..loader import bot, BASE_DIR
+from ..utils import keyboard as key
+from ..utils.database import Database
 
 load_dotenv(BASE_DIR / "settings" / ".env")
 
@@ -42,9 +41,6 @@ async def menu(message: types.Message):
         return
 
 
-# ------------------ Розсилка --------------------
-
-
 async def newsletter(message: types.Message, state: FSMContext):
     await message.answer(message.text, reply_markup=key.send_news())
     await state.update_data(text=message.text)
@@ -52,20 +48,26 @@ async def newsletter(message: types.Message, state: FSMContext):
 
 
 async def confirm_send(message: types.Message, state: FSMContext, data: Database):
-    if message.text == t.b_send_news:
-        fsm_data = await state.get_data()
-        users = await data.get_uids_notif()
-        for user in users:
-            try:
-                print('Розсилка...')
-                await bot.send_message(user, fsm_data['text'])
-            except aiogram.utils.exceptions.BotBlocked:
-                continue
-            await sleep(0.3)
-        print('Розсилка виконана!')
-    else:
+    if message.text != t.b_send_news:
         await message.answer(t.error_text)
         return
+
+    fsm_data = await state.get_data()
+    users = await data.get_uids_notif()
+
+    async def send_message(user_id, text):
+        try:
+            await bot.send_message(user_id, text)
+            await asyncio.sleep(0.3)
+        except exceptions.BotBlocked:
+            pass
+        except Exception as ex:
+            logging.error(f"Error while sending message to user {user_id}: {ex}")
+
+    tasks = [send_message(user, fsm_data['text']) for user in users]
+
+    await asyncio.gather(*tasks)
+
     await message.answer(t.hi_text, reply_markup=key.main_menu(message.chat.id))
     await state.finish()
 
@@ -73,7 +75,5 @@ async def confirm_send(message: types.Message, state: FSMContext, data: Database
 def register_handler_admin(dp: Dispatcher):
     dp.register_message_handler(cmd_admin, Text(equals=t.b_admin, ignore_case=True), state="*")
     dp.register_message_handler(menu, state=AdminMenu.menu_selection)
-
     dp.register_message_handler(newsletter, state=AdminMenu.mailing_menu)
     dp.register_message_handler(confirm_send, state=AdminMenu.confirm_menu)
-

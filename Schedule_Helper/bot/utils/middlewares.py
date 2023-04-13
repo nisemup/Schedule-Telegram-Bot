@@ -1,9 +1,10 @@
 import logging
-from aiogram.dispatcher.middlewares import LifetimeControllerMiddleware, BaseMiddleware
+
+from aiogram import types, Dispatcher
 from aiogram.dispatcher import DEFAULT_RATE_LIMIT
 from aiogram.dispatcher.handler import CancelHandler, current_handler
+from aiogram.dispatcher.middlewares import LifetimeControllerMiddleware, BaseMiddleware
 from aiogram.utils.exceptions import Throttled
-from aiogram import types, Dispatcher
 
 from .database import Database
 

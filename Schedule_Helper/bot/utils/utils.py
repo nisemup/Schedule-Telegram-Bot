@@ -1,6 +1,6 @@
-from ..language import uk_UA as t
 import datetime
 
+from ..language import uk_UA as t
 
 days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
 days_short = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat']
@@ -15,12 +15,18 @@ day_translate = {
 }
 
 
+def get_weekday():
+    today = datetime.datetime.today()
+    day_of_week = today.weekday()
+    return days[day_of_week]
+
+
 def get_week_type():
     week = datetime.datetime.today().strftime("%U")
     return 'even' if int(week) % 2 == 0 else 'odd'
 
 
-def create_pre(data):
+def create_pre(data: list):
     data = sorted(data)
     result = t.hi_pre + t.pre_form.format(
         data[0][2],
@@ -33,7 +39,7 @@ def create_pre(data):
     return result
 
 
-def create_schedule(data):
+def create_schedule(data: list):
     result = {}
     for key in sorted(data):
         form = t.pairs_forms[key[1]].format(
@@ -42,10 +48,6 @@ def create_schedule(data):
             f'{key[3]} - {key[4]}',
             key[5] if key[6] is None else f'<a href="{key[6]}">{key[5]}</a>'
         )
-
-        if result.get(key[0]):
-            result[key[0]] += form
-        else:
-            result[key[0]] = form
+        result[key[0]] = result[key[0]] + form if result.get(key[0]) else form
 
     return result

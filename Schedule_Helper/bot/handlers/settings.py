@@ -1,10 +1,11 @@
-from aiogram.dispatcher import FSMContext
-from ..utils import keyboard as key
-from ..utils.database import Database
-from ..language import uk_UA as t
 from aiogram import Dispatcher, types
+from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
+
+from ..language import uk_UA as t
+from ..utils import keyboard as key
+from ..utils.database import Database
 
 
 class SettingsMenu(StatesGroup):
@@ -38,12 +39,9 @@ async def notification(message: types.Message, state: FSMContext, data: Database
     if message.text == t.b_on_off:
         user_state = await data.get_notification(message.chat.id)
         await data.update_notification(message.chat.id, user_state)
-        if user_state:
-            await message.answer(t.off_ntfc, reply_markup=key.main_menu(message.chat.id))
-        elif not user_state:
-            await message.answer(t.on_ntfc, reply_markup=key.main_menu(message.chat.id))
-        else:
-            await message.answer(t.error_func, reply_markup=key.main_menu(message.chat.id))
+        message_text, reply_markup = (t.off_ntfc, key.main_menu(message.chat.id)) if user_state else (t.on_ntfc, key.main_menu(message.chat.id))
+        print(type(reply_markup))
+        await message.answer(message_text, reply_markup=reply_markup)
         await state.finish()
     elif message.text == t.b_back:
         await message.answer(t.b_menu_chosen, reply_markup=key.settings())
