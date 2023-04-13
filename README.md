@@ -43,7 +43,7 @@
     grant all privileges on database schedule to admin;
 ```
 
-<h3 align="center">⚠️ [Do not forget to configure remote connection ⚠️ permissions for PostgreSQL](https://www.bigbinary.com/blog/configure-postgresql-to-allow-remote-connection) </h3>
+⚠️⚠️ [Do not forget to configure remote connection permissions for PostgreSQL](https://www.bigbinary.com/blog/configure-postgresql-to-allow-remote-connection) ⚠️⚠️
 
 **Change** /settings/.env.template **to** /settings/.env
 
