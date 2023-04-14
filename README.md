@@ -16,7 +16,7 @@
 - Fully asynchronous.
 
 ## 📦| Install
-- Install Python, Redis and Git.
+- Install Git, Python, PostgreSQL and Redis.
 ```shell
     apt install -y git python3 postgresql postgresql-contrib redis-server
 ```
