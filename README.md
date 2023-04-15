@@ -69,6 +69,17 @@
 ```shell
     python3 manage.py collectstatic
 ```
+- Configuring the Cron scheduler.
+```shell
+    crontab -e
+```  
+- Add these lines to the end of the file.
+
+**Replace** /path/to/file **with the location of the** Schedule_Helper **folder**
+```shell
+    30 18 * * 1-5 /usr/bin/python3.9 /path/to/file/Schedule_Helper/timed_event.py pre >/dev/null 2>&1
+    0 7 * * 1-6 /usr/bin/python3.9 /path/to/file/Schedule_Helper/timed_event.py today >/dev/null 2>&1
+```
 - Start the bot.
 ```shell
     python3 app.py
