@@ -18,7 +18,7 @@ day_translate = {
 def get_weekday():
     today = datetime.datetime.today()
     day_of_week = today.weekday()
-    return days[day_of_week]
+    return days[day_of_week] if day_of_week in days else None
 
 
 def get_week_type():
