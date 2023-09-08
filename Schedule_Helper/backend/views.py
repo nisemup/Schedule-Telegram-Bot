@@ -1,12 +1,8 @@
-from . import serializers
-from . import models
-
-from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import permissions, status, viewsets, filters
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.generics import ListAPIView
+from rest_framework import permissions, viewsets
+
+from . import models
+from . import serializers
 
 
 class GroupViewSet(viewsets.ModelViewSet):
