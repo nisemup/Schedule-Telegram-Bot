@@ -74,3 +74,7 @@ class Database:
     async def get_uids_notif(self) -> list[str]:
         sql = """SELECT user_id FROM backend_profiles WHERE notification = True"""
         return [key[0] for key in await self.__connect.fetch(sql)]
+
+    async def get_week_reverse(self, gid: str) -> bool:
+        sql = """SELECT week_reverse FROM backend_groups WHERE gid = $1"""
+        return await self.__connect.fetchval(sql, gid)

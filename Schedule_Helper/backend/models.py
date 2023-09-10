@@ -31,6 +31,11 @@ class Groups(models.Model):
         verbose_name='Group number'
     )
 
+    week_reverse = models.BooleanField(
+        verbose_name='Week reverse',
+        default=False
+    )
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
