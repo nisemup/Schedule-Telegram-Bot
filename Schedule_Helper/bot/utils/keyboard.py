@@ -77,8 +77,11 @@ def sdl(week, week_reverse=False, day=None):
         'saturday': types.InlineKeyboardButton(text='Cб', callback_data='saturday'),
     }
 
-    odd = types.InlineKeyboardButton(text=t.odd, callback_data='odd')
-    even = types.InlineKeyboardButton(text=t.even, callback_data='even')
+    odd_text = t.even if week_reverse else t.odd
+    even_text = t.odd if week_reverse else t.even
+
+    odd = types.InlineKeyboardButton(text=odd_text, callback_data='odd')
+    even = types.InlineKeyboardButton(text=even_text, callback_data='even')
     close = types.InlineKeyboardButton(text='Закрити', callback_data='close')
 
     if day in days:
@@ -86,7 +89,7 @@ def sdl(week, week_reverse=False, day=None):
 
     keyboard = types.InlineKeyboardMarkup()
     keyboard.add(*days.values())
-    keyboard.add(even if week == 'odd' and week_reverse == False else odd)
+    keyboard.add(odd if week == 'even' else even)
     keyboard.add(close)
     return keyboard
 
