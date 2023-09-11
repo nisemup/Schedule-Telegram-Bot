@@ -67,7 +67,7 @@ def send_news():
     return keyboard
 
 
-def sdl(week, day=None):
+def sdl(week, week_reverse=False, day=None):
     days = {
         'monday': types.InlineKeyboardButton(text='Пн', callback_data='monday'),
         'tuesday': types.InlineKeyboardButton(text='Вт', callback_data='tuesday'),
@@ -86,7 +86,7 @@ def sdl(week, day=None):
 
     keyboard = types.InlineKeyboardMarkup()
     keyboard.add(*days.values())
-    keyboard.add(even if week == 'odd' else odd)
+    keyboard.add(even if week == 'odd' and week_reverse == False else odd)
     keyboard.add(close)
     return keyboard
 
