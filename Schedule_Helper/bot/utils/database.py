@@ -78,3 +78,13 @@ class Database:
     async def get_week_reverse(self, gid: str) -> bool:
         sql = """SELECT week_reverse FROM backend_groups WHERE gid = $1"""
         return await self.__connect.fetchval(sql, gid)
+
+    async def add_count(self, user: str, button: str) -> bool:
+        sql = """
+            INSERT INTO backend_stats (user_id, button_name, count)
+            VALUES ($1, $2, 1)
+            ON CONFLICT (user_id, button_name)
+            DO UPDATE SET
+                count = backend_stats.count+1;
+        """
+        return await self.__connect.execute(sql, user, button)

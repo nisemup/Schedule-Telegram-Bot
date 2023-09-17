@@ -18,15 +18,15 @@
 ## 📦| Install
 - Install Git, Python, PostgreSQL and Redis.
 ```shell
-    apt install -y git python3 postgresql postgresql-contrib redis-server
+apt install -y git python3 postgresql postgresql-contrib redis-server
 ```
 - Clone this git repository.
 ```shell
-    git clone https://github.com/nisemup/Schedule-Telegram-Bot/
+git clone https://github.com/nisemup/Schedule-Telegram-Bot/
 ```
 - Install requirements with pip3
 ```shell
-    pip3 install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ## 📝| Configuration
@@ -34,13 +34,13 @@
 **Configuring PostgreSQL:**
 - Switching to a postgres account on your server. (default password - postgres) 
 ```shell
-    sudo -u postgres psql
+sudo -u postgres psql
 ```
 - Create user and database.
 ```shell
-    create database schedule;
-    create user admin with encrypted password 'password';
-    grant all privileges on database schedule to admin;
+create database schedule;
+create user admin with encrypted password 'password';
+grant all privileges on database schedule to admin;
 ```
 
 ⚠️⚠️ [Do not forget to configure remote connection permissions for PostgreSQL](https://www.bigbinary.com/blog/configure-postgresql-to-allow-remote-connection) ⚠️⚠️
@@ -62,25 +62,25 @@
 ## ⚙️| Deployment
 - Create a migration file and apply it.
 ```shell
-   python3 manage.py makemigrations
-   python3 manage.py migrate
+python3 manage.py makemigrations
+python3 manage.py migrate
 ```
 - Collect static files.
 ```shell
-    python3 manage.py collectstatic
+python3 manage.py collectstatic
 ```
 - Configuring the Cron scheduler.
 ```shell
-    crontab -e
+crontab -e
 ```  
 - Add these lines to the end of the file.
 
 **Replace** /path/to/file **with the location of the** Schedule_Helper **folder**
 ```shell
-    30 18 * * 1-5 /usr/bin/python3.9 /path/to/file/Schedule_Helper/timed_event.py pre >/dev/null 2>&1
-    0 7 * * 1-6 /usr/bin/python3.9 /path/to/file/Schedule_Helper/timed_event.py today >/dev/null 2>&1
+30 18 * * 1-5 /usr/bin/python3.9 /path/to/file/Schedule_Helper/timed_event.py pre >/dev/null 2>&1
+0 7 * * 1-6 /usr/bin/python3.9 /path/to/file/Schedule_Helper/timed_event.py today >/dev/null 2>&1
 ```
 - Start the bot.
 ```shell
-    python3 app.py
+python3 app.py
 ```

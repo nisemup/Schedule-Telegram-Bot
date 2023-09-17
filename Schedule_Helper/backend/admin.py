@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib import messages
 from django.utils.translation import ngettext
-from .models import Profiles, Schedule, Groups
+from .models import Profiles, Schedule, Groups, Courses, Lecturers, Stats
 
 
 def create_action(data):
@@ -60,3 +60,21 @@ class Schedule_Admin(admin.ModelAdmin):
 @admin.register(Groups)
 class Groups_Admin(admin.ModelAdmin):
     list_display = ('gid', 'faculty', 'gnum')
+
+
+@admin.register(Courses)
+class Courses_Admin(admin.ModelAdmin):
+    list_display = ('faculty', 'name')
+    list_filter = ('faculty', )
+
+
+@admin.register(Lecturers)
+class Lecturers_Admin(admin.ModelAdmin):
+    list_display = ('first_name', 'last_name', 'rank')
+    list_filter = ('rank', )
+
+
+@admin.register(Stats)
+class Stats_Admin(admin.ModelAdmin):
+    list_display = ('user', 'button_name', 'count')
+    list_filter = ('user', 'button_name')

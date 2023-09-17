@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 from django.utils.crypto import get_random_string
 
 
@@ -9,6 +10,24 @@ days_choice = (
     ('thursday', 'Thursday'),
     ('friday', 'Friday'),
     ('saturday', 'Saturday'),
+)
+
+faculty_choice = (
+    ('Факультет економіки та управління', 'Економіка та уп.'),
+    ('Факультет товарознавства, управління та сфери обслуговування', 'Товарознавство, уп. та сф. обсл.'),
+    ('Факультет міжнародних економічних відносин та інформаційних технологій', 'МЕВ та ІТ'),
+    ('Факультет права', 'Право')
+)
+
+rank_choice = (
+    ('Ректор', 'Ректор'),
+    ('Заступник ректора', 'Зас. ректора'),
+    ('Декан', 'Декан'),
+    ('Завідувач кафедри', 'Зав. кафедри'),
+    ('Професор', 'Професор'),
+    ('Доцент', 'Доцент'),
+    ('Старший викладач', 'Ст. викладач'),
+    ('Викладач', 'Викладач'),
 )
 
 
@@ -141,4 +160,93 @@ class Schedule(models.Model):
                 fields=['group_id', 'day', 'number', 'week_type'],
                 name='unique_sdl'),
         ]
-        verbose_name = 'Schedule'
+        verbose_name = "Schedule"
+
+
+class Lecturers(models.Model):
+    first_name = models.CharField(
+        max_length=35,
+        verbose_name="First name"
+    )
+
+    last_name = models.CharField(
+        max_length=35,
+        verbose_name="Last name"
+    )
+
+    rank = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+        choices=rank_choice,
+        verbose_name="Rank"
+    )
+
+    description = models.CharField(
+        max_length=200,
+        null=True,
+        blank=True,
+        verbose_name="Description"
+    )
+
+    class Meta:
+        verbose_name = 'Lecturer'
+
+    def __str__(self):
+        return self.first_name + " " + self.last_name
+
+
+class Courses(models.Model):
+    faculty = models.CharField(
+        max_length=70,
+        choices=faculty_choice,
+        verbose_name="Faculty"
+    )
+
+    name = models.CharField(
+        max_length=65,
+        verbose_name="Name"
+    )
+
+    lecturers = models.ManyToManyField(Lecturers)
+
+    deanery_location = models.CharField(
+        max_length=60,
+        verbose_name="Deanery location"
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name'],
+                name='unique_courses'),
+        ]
+        verbose_name = 'Course'
+
+    def __str__(self):
+        return self.name
+
+
+class Stats(models.Model):
+    user = models.ForeignKey(
+        Profiles,
+        on_delete=models.CASCADE
+    )
+
+    button_name = models.CharField(
+        verbose_name='Button name',
+        max_length=35
+    )
+
+    count = models.SmallIntegerField(
+        default=0,
+        verbose_name='Count'
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'button_name'],
+                name='unique_stats'),
+        ]
+        verbose_name='Stat'

@@ -28,6 +28,8 @@ async def cmd_timetable(message: types.Message, state: FSMContext, data: Databas
 async def callback_register(call: types.CallbackQuery, state: FSMContext, data: Database):
     fsm_data = await state.get_data()
 
+    await data.add_count(call.message.chat.id, 'timetable')
+
     week = fsm_data['week']
     schedule = fsm_data['schedule']
     week_reverse = fsm_data['week_reverse']
