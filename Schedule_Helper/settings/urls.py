@@ -10,6 +10,8 @@ router = routers.DefaultRouter()
 router.register(r'groups', views.GroupViewSet, basename='MyModel')
 router.register(r'profiles', views.ProfileViewSet)
 router.register(r'schedule', views.ScheduleViewSet)
+router.register(r'lecturers', views.LecturersViewSet)
+router.register(r'courses', views.CoursesViewSet)
 
 
 urlpatterns = [

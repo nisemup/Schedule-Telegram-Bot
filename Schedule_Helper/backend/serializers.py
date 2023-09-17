@@ -22,3 +22,13 @@ class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Schedule
         fields = '__all__'
+
+class CoursesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Courses
+        fields = '__all__'
+
+class LecturersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Lecturers
+        fields = '__all__'

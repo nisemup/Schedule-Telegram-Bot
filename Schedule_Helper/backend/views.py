@@ -30,3 +30,13 @@ class ScheduleViewSet(viewsets.ModelViewSet):
     queryset = models.Schedule.objects.all()
     serializer_class = serializers.ScheduleSerializer
     permission_classes = [permissions.IsAdminUser]
+
+class CoursesViewSet(viewsets.ModelViewSet):
+    queryset = models.Courses.objects.all()
+    serializer_class = serializers.CoursesSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+class LecturersViewSet(viewsets.ModelViewSet):
+    queryset = models.Lecturers.objects.all()
+    serializer_class = serializers.LecturersSerializer
+    permission_classes = [permissions.IsAdminUser]
