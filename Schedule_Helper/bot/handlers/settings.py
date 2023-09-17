@@ -21,6 +21,8 @@ async def menu(message: types.Message):
 
 
 async def type_chosen(message: types.Message, state: FSMContext, data: Database):
+    await data.add_count(message.chat.id, 'setting')
+
     if message.text == t.b_notification:
         await message.answer(t.b_notification, reply_markup=key.chosen_on())
         await SettingsMenu.notification_selection.set()

@@ -225,3 +225,28 @@ class Courses(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Stats(models.Model):
+    user = models.ForeignKey(
+        Profiles,
+        on_delete=models.CASCADE
+    )
+
+    button_name = models.CharField(
+        verbose_name='Button name',
+        max_length=35
+    )
+
+    count = models.SmallIntegerField(
+        default=0,
+        verbose_name='Count'
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'button_name'],
+                name='unique_stats'),
+        ]
+        verbose_name='Stat'

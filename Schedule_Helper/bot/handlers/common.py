@@ -14,6 +14,8 @@ class StartHandler(StatesGroup):
 
 
 async def start(message: types.Message, state: FSMContext, data: Database):
+    await data.add_count(message.chat.id, 'common')
+
     await state.finish()
     username = message.from_user.username if message.from_user.username else None
     await state.update_data(username=username)
